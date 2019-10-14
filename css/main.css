@@ -1,0 +1,39 @@
+body {
+	background-color: #cccccc;
+}
+
+.container {
+	background-color: white;
+	display: block;
+}
+.main #content{
+	display: block;
+	min-height: 500px;
+}
+#comment{
+	display: block;
+	height: 80px;
+	margin-top: 15px;
+	border: 1px solid black;
+}
+#pagination {
+	display: block;
+	width: 150px;
+	height: 50px;
+	margin: 10px auto;
+
+}
+#res a{
+	float: right;
+	color:red;
+	margin: 5px;
+}
+input {
+	margin-top: 10px;
+}
+textarea {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	width : 250px;
+	height: 100px;
+}
