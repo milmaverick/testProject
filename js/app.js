@@ -13,7 +13,6 @@ $(document).ready(function(){
 		    	 'email' : email,
 		    	 'text' : text ,
 		    	};
-		    	//var str = $(this).serialize();
 				$.ajax({
 						url : 'action/mess.php' ,
 					    method : 'POST' ,
@@ -35,6 +34,48 @@ $(document).ready(function(){
 		 }
 		 return false;
 	});
+
+  $('#signinBtn').on('click', function(){
+  		 var admin = $("#admin").val();
+  		 var passwd = $("#password1").val();
+  		 if(admin != 0 && passwd != 0)
+      	 {
+  		    	var params =
+  		    	{
+  		    	 'admin' : admin,
+  		    	 'passwd' : passwd ,
+  		    	};
+  				$.ajax({
+  						url : 'action/mess.php' ,
+  					  method : 'POST' ,
+  					  data : {
+  					        action : 'signin',
+  					        params : params,
+  					    },
+              success : function(data){
+                    showCom();
+  					    }
+  				});
+  		 }
+       else{
+         alert('Заполните логин и пароль');
+       }
+  		 return false;
+  	});
+
+    $('#logOut').on('click', function(){
+      $.ajax({
+          url : 'action/mess.php' ,
+            method : 'POST' ,
+            data : {
+                action : 'logOut',
+            },
+          success : function(data){
+                  showCom();
+              }
+      });
+    });
+
 	showCom();
 	pagination();
 });
@@ -78,10 +119,9 @@ function pagination(page=1){
 	    },
 	    success : function(comments){
 	       		$(".pagination").html(comments);
-	       		}
+          },
 	});
 	showCom(page);
-
 }
 
 function isValidEmailAddress(emailAddress) {

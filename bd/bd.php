@@ -98,6 +98,7 @@ $dsn = "mysql:host = {$host}; dbname = comments;";
  */
 try {
     DB::getInstance()->connect($dsn, $dbuser, $dbpassword);
+    session_start() ;
 } catch (Exception $e) {
     echo $e->getMessage();
     exit;
