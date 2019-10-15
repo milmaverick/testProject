@@ -1,8 +1,12 @@
 $(document).ready(function(){
+
+	pagination();
+	isLogged();
+
 	$("#form").submit(function(){
-		 var email = $("#email").val();
-		 var name = $("#name").val();
-		 var text = $("#text").val();
+		 var email = HtmlEncode($("#email").val());
+		 var name =  HtmlEncode($("#name").val());
+		 var text =  HtmlEncode($("#text").val());
 		 if(email != 0)
     	 {
 		    if(isValidEmailAddress(email))
@@ -13,6 +17,7 @@ $(document).ready(function(){
 		    	 'email' : email,
 		    	 'text' : text ,
 		    	};
+
 				$.ajax({
 						url : 'action/mess.php' ,
 					    method : 'POST' ,
@@ -21,11 +26,12 @@ $(document).ready(function(){
 					        params : params,
 					    },
 					    success : function(data){
-
 					        $('#form')[0].reset();
-					        alert(data);
 					        pagination();
-					    }
+					    },
+							error : function(data){
+								alert("ошибка");
+							}
 				});
 			}
 			else{
@@ -53,8 +59,16 @@ $(document).ready(function(){
   					        params : params,
   					    },
               success : function(data){
-                    showCom();
-  					    }
+										pagination();
+										$("#logOut").show();
+										$("#login").hide();
+										$('.res a').show();
+										$('#signinBtn').hide();
+  					    },
+
+							error : function(data){
+									alert("ошибка");
+								}
   				});
   		 }
        else{
@@ -63,7 +77,7 @@ $(document).ready(function(){
   		 return false;
   	});
 
-    $('#logOut').on('click', function(){
+  $('#logOut').on('click', function(){
       $.ajax({
           url : 'action/mess.php' ,
             method : 'POST' ,
@@ -71,13 +85,18 @@ $(document).ready(function(){
                 action : 'logOut',
             },
           success : function(data){
-                  showCom();
-              }
+									pagination();
+                  $('.res a').hide();
+									$("#logOut").hide();
+									$("#login").show();
+									$('#signinBtn').show();
+              },
+					error : function(data){
+								alert("ошибка");
+							}
       });
     });
 
-	showCom();
-	pagination();
 });
 
 function showCom(page=1){
@@ -90,7 +109,10 @@ function showCom(page=1){
 	    },
 	    success : function(comments){
 	       		$("#content").html(comments);
-	       		}
+	       		},
+			error : function(comments){
+							alert("ошибка");
+						}
 	});
 }
 
@@ -103,9 +125,31 @@ function deleteElement(id){
 	        id : id,
 	    },
 	    success : function(comments){
-	       		alert(comments);
+	       		alert('Удалено');
 	       		pagination();
-	       		}
+	       		},
+			error : function(comments){
+							alert("ошибка");
+						}
+	});
+}
+
+function changeElement(id){
+	$.ajax({
+		url : 'action/mess.php' ,
+		method : 'POST' ,
+		data : {
+				action : 'change',
+				id : id,
+		},
+		success : function(comments){
+					alert('изменено');
+					$('#comment'+ id).hide();
+					pagination();
+					},
+		error : function(comments){
+						alert("ошибка");
+					}
 	});
 }
 
@@ -118,10 +162,36 @@ function pagination(page=1){
 	        page :page,
 	    },
 	    success : function(comments){
+							// alert(comments);
 	       		$(".pagination").html(comments);
+					//	isLogged();
           },
+			error : function(comments){
+						alert("ошибка");
+					}
 	});
-	showCom(page);
+		showCom(page);
+}
+
+function isLogged (){
+	$.ajax({
+			url : 'action/mess.php' ,
+				method : 'POST' ,
+				data : {
+						action : 'isLogged',
+				},
+	}).done(function( msg ) {
+		if(msg=="true"){
+			$("#logOut").show();
+			$("#login").hide();
+			$('.res a').show();
+		}
+		else{
+			$("#logOut").hide();
+			$("#login").show();
+			$('.res a').hide();
+		}
+	})
 }
 
 function isValidEmailAddress(emailAddress) {

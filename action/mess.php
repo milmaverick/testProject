@@ -2,7 +2,8 @@
 
 require '../bd/bd.php';
 
-define("limit", 5);
+define("LIMIT", 5);
+
 function getPage (){
 	if(!isset($_POST['page']))
 	{
@@ -44,6 +45,32 @@ if ( isset($_POST['action'])){
 	}
 }
 
+function action_index(){
+	$page = getPage();
+	$tpg=($page-1)* LIMIT ;
+  $pdo = DB::getInstance()->get_pdo();
+	if(isset($_SESSION['logged_user'])){
+			$query = 'SELECT * FROM `comments` ORDER BY date DESC LIMIT '.$tpg.','.LIMIT;
+		  $comments = $pdo->query($query)->fetchAll();
+			foreach ($comments as $comment) {
+	  		echo "<div class='comment'> ИМЯ: ". $comment['name']." |  email:" . $comment['email'] . "<span class='res'  id='comment".$comment['id']."'><a href='#'
+				onclick='deleteElement(".$comment['id'].")'> Удалить</a></span>".
+	  		"<br> TEXT:".$comment['text']."</div>";
+	  	}
+		}
+
+	else {
+			// code...
+			$query = 'SELECT * FROM `comments` WHERE `isPass`=1 ORDER BY date DESC LIMIT '.$tpg.','.LIMIT;
+		  $comments = $pdo->query($query)->fetchAll();
+			foreach ($comments as $comment) {
+	  		echo "<div class='comment'> ИМЯ: ". $comment['name']." |  email: " . $comment['email'] .
+	  		"<br> TEXT:".$comment['text']."</div>";
+	  	}
+		}
+
+}
+
 function action_add(){
 	$errors=array();
 		if(trim($_POST['params']['name'])==''){
@@ -62,56 +89,42 @@ function action_add(){
 			}
 		}
 
-		if(!preg_match('/^((([0-9A-Za-z]{1}[-0-9A-z\.]{1,}[0-9A-Za-z]{1})|([0-9А-Яа-я]{1}[-0-9А-я\.]{1,}
-			[0-9А-Яа-я]{1}))@([-A-Za-z]{1,}\.){1,2}[-A-Za-z]{2,})$/u', trim($_POST['params']['email'])))
-		{
-			$errors[]='Некорректный email';
-		}
 		if(empty($errors))
 		{
-			$comment= R::dispense('comments');
-			$comment->name = $_POST['params']['name'];
-			$comment->email = $_POST['params']['email'];
-			$comment->text = $_POST['params']['text'];
-
-			R::store($comment);
-			echo "Комментарий добавлен";
+			try {
+				$pdo = DB::getInstance()->get_pdo();
+				$name = htmlspecialchars($_POST['params']['name']);
+				$email = htmlspecialchars($_POST['params']['email']);
+				$text = htmlspecialchars($_POST['params']['text']);
+				// $query = "INSERT INTO `comments` (`id`, `name`, `email`, `text`, `date`, `isPass`) VALUES (NULL, '{$name}', '{$email}',
+				// 	'{$text}', CURRENT_TIMESTAMP, '0')";
+				$safe = $pdo->prepare("INSERT INTO `comments` SET name= :name, email= :email, text= :text, date=CURRENT_TIMESTAMP , isPass='0' ");
+				$arr= ['name'=> $name, 'email'=> $email, 'text'=> $text];
+				$safe->exec($arr);
+			}
+			catch (PDOException $e) {
+				echo "Ошибка связи с бд";
+			}
 		}
 		else{
 			echo array_shift($errors);
 		}
 }
 
-function action_index(){
-	$page = getPage();
-
-	$tpg=($page-1)* limit ;
-
-  $pdo = DB::getInstance()->get_pdo();
-  $query = 'SELECT * FROM `comments` ORDER BY date DESC LIMIT '.$tpg.','.limit;
-  $comments = $pdo->query($query)->fetchAll();
-  if(isset($_SESSION['logged_user'])){
-    foreach ($comments as $comment) {
-      echo "<div id='comment'> ИМЯ: ". $comment['name']." |  email:" . $comment['email'] .
-      "<span id='res'><a href='#' onclick='deleteElement(".$comment['id'].")'> Удалить</a></span>
-  		<br> TEXT:".$comment['text']."</div>";
-    }
-  }
-  else{
-    foreach ($comments as $comment) {
-  		echo "<div id='comment'> ИМЯ: ". $comment['name']." |  email:" . $comment['email'] .
-  		"<br> TEXT:".$comment['text']."</div>";
-  	}
-  }
-}
-
 function pagination(){
 	$page = getPage();
-  $query = 'SELECT count(id) as count FROM `comments` ';
+
+	if (isset($_SESSION['logged_user'])) {
+		// code...
+		$query = 'SELECT count(id) as count FROM `comments` ';
+	}
+	else{
+		$query = 'SELECT count(id) as count FROM `comments` WHERE `isPass`=1';
+	}
   $pdo = DB::getInstance()->get_pdo();
   $pages = $pdo->query($query)->fetchAll();
 
-	$numb= ceil($pages[0]['count']/limit);
+	$numb= ceil($pages[0]['count']/LIMIT);
 	for ($i=1; $i <= $numb; $i++)
 	{
 		 if($page==$i)
@@ -125,9 +138,15 @@ function pagination(){
 }
 
 function  action_delete(){
-	$comment = R::load('comments',$_POST['id']);
-	R::trash($comment);
-	echo "Удалено ";
+	try {
+		$pdo = DB::getInstance()->get_pdo();
+		$id = htmlspecialchars($_POST['id']);
+		$query = "UPDATE `comments` SET `isPass` = '0' WHERE `comments`.`id` = ".$id;
+		$pdo->exec($query);
+	}
+	catch (PDOException $e) {
+		echo "Ошибка связи с бд";
+	}
 }
 
 
@@ -141,7 +160,6 @@ function action_signin(){
 		{
 			if($_POST['params']['passwd']==$user[0]['psw'])
 			{
-
 				$_SESSION['logged_user']=$user[0]['login'];
 				echo $_SESSION['logged_user'] . '  '. $user[0]['login'];
 			}
@@ -159,8 +177,20 @@ function action_signin(){
 		}
 }
 
-function action_logOut(){
+function action_isLogged(){
   if(isset($_SESSION['logged_user']))
+  {
+    echo "true";
+		return true;
+  }
+  else {
+    echo "false";
+		return false;
+  }
+}
+
+function action_logOut(){
+  if(action_isLogged())
   {
     unset($_SESSION['logged_user']);
   	echo "Вышел из Аккаунт Php";
@@ -169,5 +199,7 @@ function action_logOut(){
     echo "Нету акка1";
   }
 }
+
+
 
  ?>
