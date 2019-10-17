@@ -1,5 +1,5 @@
 $(document).ready(async function(){
-	//await getPage();
+
 	await pagination();
 	await isLogged();
 
@@ -64,7 +64,7 @@ $(document).ready(async function(){
   		    	 'passwd' : passwd ,
   		    	};
   				$.ajax({
-  						url : 'action/mess.php' ,
+  						url : 'action/admin.php' ,
   					  method : 'POST' ,
   					  data : {
   					        action : 'signin',
@@ -77,7 +77,7 @@ $(document).ready(async function(){
 								$('#alert-success').html('Успешный вход!');
 								$("#alert-success").show();
 								setTimeout(function(){
-							    $('#alert-danger').hide();
+							    $('#alert-success').hide();
 							 }, 5000);
 								$("#logOut").show();
 								$("#login").hide();
@@ -85,7 +85,7 @@ $(document).ready(async function(){
 								$('#signinBtn').hide();
 							}
 							else{
-								$('#alert-danger').html('Что то не так');
+								$('#alert-danger').html(msg);
 								$("#alert-danger").show();
 								setTimeout(function(){
 							    $('#alert-danger').hide();
@@ -115,7 +115,7 @@ $(document).ready(async function(){
 							 'text' : text ,
 	  		    	};
 	  				$.ajax({
-	  						url : 'action/mess.php' ,
+	  						url : 'action/admin.php' ,
 	  					  method : 'POST' ,
 	  					  data : {
 	  					        action : 'update',
@@ -123,7 +123,6 @@ $(document).ready(async function(){
 	  					    },
 	  				}).done(function( msg ) {
 								if(msg=="true") {
-									//$('#formChange')[0].reset();
 									pagination();
 									$('#alert-success').html('Комментарий Изменен');
 									$("#alert-success").show();
@@ -149,13 +148,14 @@ $(document).ready(async function(){
 
   $('#logOut').on('click', function(){
       $.ajax({
-          url : 'action/mess.php' ,
+          url : 'action/admin.php' ,
             method : 'POST' ,
             data : {
                 action : 'logOut',
             },
           success : function(data){
 									pagination();
+
 									$('.alert').hide();
                   $('.res a').hide();
 									$("#logOut").hide();
@@ -163,6 +163,7 @@ $(document).ready(async function(){
 									$('#signinBtn').show();
               },
 					error : function(data){
+
 								alert("ошибка");
 							}
       });
@@ -197,7 +198,7 @@ function showCom(page=1){
 
 function deleteElement(id){
 		$.ajax({
-	    url : 'action/mess.php' ,
+	    url : 'action/admin.php' ,
 	    method : 'POST' ,
 	    data : {
 	        action : 'delete',
@@ -250,7 +251,7 @@ function changeElement(id){
 
 function accessElement(id){
 	$.ajax({
-		url : 'action/mess.php' ,
+		url : 'action/admin.php' ,
 		method : 'POST' ,
 		data : {
 				action : 'access',
@@ -260,7 +261,7 @@ function accessElement(id){
 			$('#comment'+id).removeClass('deleteElement');
 			$('#return'+id).hide();
 			$('#delete'+id).show();
-			alert(comments);
+
 					},
 		error : function(comments){
 						alert("ошибка");
