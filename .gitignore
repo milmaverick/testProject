@@ -1,0 +1,15 @@
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+css/*
+!css/main.css
+js/*
+!js/app.js

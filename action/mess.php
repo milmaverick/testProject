@@ -4,10 +4,18 @@ require '../bd/bd.php';
 
 define("LIMIT", 5);
 
+function getPageAjax()
+{
+	// code...
+		$page = getPage();
+		echo json_encode($page);
+}
+
 function getPage (){
 	if(isset($_POST['page']))
 	{
-	 		return $_SESSION['page']= $_POST['page'];
+			$_SESSION['page']= $_POST['page'];
+	 		return $_SESSION['page'];
 	}
 	elseif(isset($_SESSION['page'])){
 		return $_SESSION['page'];
@@ -22,12 +30,15 @@ function getPage (){
 if ( isset($_POST['action'])){
 	switch ( $_POST['action'] )
 	{
+			case 'getPage':
+					getPageAjax();
+					break;
 	    case 'index':
 	        action_index();
 	        break;
 			case 'change':
-		           action_change();
-		           break;
+		      action_change();
+		      break;
 	    case 'add':
 	        action_add();
 	        break;
@@ -38,11 +49,11 @@ if ( isset($_POST['action'])){
 }
 
 function action_index(){
-	$page = $_SESSION['page'];
+	$page = getPage ();
 	$tpg=($page-1)* LIMIT ;
   $pdo = DB::getInstance()->get_pdo();
 	if(isset($_SESSION['logged_user'])){
-			$query = 'SELECT * FROM `comments` ORDER BY date DESC LIMIT '.$tpg.','.LIMIT;
+			$query = 'SELECT * FROM `comments` ORDER BY `'.$_POST['sort'].'` DESC LIMIT '.$tpg.','.LIMIT;
 		  $comments = $pdo->query($query)->fetchAll();
 			foreach ($comments as $comment) {
 			?>
@@ -73,7 +84,7 @@ function action_index(){
 		}
 
 	else {
-			$query = 'SELECT * FROM `comments` WHERE `isPass`=1 ORDER BY date DESC LIMIT '.$tpg.','.LIMIT;
+			$query = 'SELECT * FROM `comments` WHERE `isPass`=1 ORDER BY `'.$_POST['sort'].'` DESC LIMIT '.$tpg.','.LIMIT;
 		  $comments = $pdo->query($query)->fetchAll();
 			foreach ($comments as $comment) {
 			?>

@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <title>esProject</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" /> -->
+  <!-- <script src="js/bootstrap.js" type="text/javascript"></script> -->
+  <!-- <script src="js/jquery.js" type="text/javascript"></script> -->
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
@@ -45,6 +48,15 @@
               <button type="submit" class="btn btn-primary">Отправить</button>
             </form>
 
+            <div class="selector">
+              Сортировать по :
+              <select id = "selectorID">
+                  <!-- <option disabled>Выберите героя</option> -->
+                  <option selected value="date">Дата</option>
+                  <option value="email">Email</option>
+                  <option value="name">Name</option>
+              </select>
+            </div>
             <div id="content">
 
             </div>
@@ -73,7 +85,7 @@
 
         </div>
         <div class="alert alert-danger" id="alert-danger" role="alert">
-          
+
         </div>
         <form id="form2">
            <input type="text" name="email" id="admin" placeholder="admin" required="required"/>

@@ -1,7 +1,9 @@
 $(document).ready(async function(){
-
-	await pagination();
+	await getPage();
+	//await pagination(getPage());
 	await isLogged();
+
+ //Отправка комментария--------------------
 
 	$("#form").submit(function(){
 		 var elem = this;
@@ -53,6 +55,12 @@ $(document).ready(async function(){
 		 return false;
 	});
 
+	$('select').on('change', function() {
+		showCom();
+	});
+
+	//Вход В админку---------------------------------------
+
   $('#signinBtn').on('click', function(){
   		 var admin = $("#admin").val();
   		 var passwd = $("#password1").val();
@@ -72,7 +80,8 @@ $(document).ready(async function(){
   					    },
   				}).done(function( msg ) {
 							if(msg=="true") {
-								pagination();
+								//pagination();
+								getPage();
 
 								$('#alert-success').html('Успешный вход!');
 								$("#alert-success").show();
@@ -99,6 +108,32 @@ $(document).ready(async function(){
   		 return false;
   	});
 
+		//Выход из админки--------------
+
+	  $('#logOut').on('click', function(){
+	      $.ajax({
+	          url : 'action/admin.php' ,
+	            method : 'POST' ,
+	            data : {
+	                action : 'logOut',
+	            },
+	          success : function(data){
+										//pagination();
+										getPage();
+										$('.alert').hide();
+	                  $('.res a').hide();
+										$("#logOut").hide();
+										$("#login").show();
+										$('#signinBtn').show();
+	              },
+						error : function(data){
+
+									alert("ошибка");
+								}
+	      });
+	    });
+
+		//Измениние комментария--------------------------------
 
 		$('#updateCom').on('click', function(){
 				 var id = $("#idChange").val();
@@ -123,7 +158,8 @@ $(document).ready(async function(){
 	  					    },
 	  				}).done(function( msg ) {
 								if(msg=="true") {
-									pagination();
+									getPage();
+									//pagination();
 									$('#alert-success').html('Комментарий Изменен');
 									$("#alert-success").show();
 									setTimeout(function(){
@@ -146,28 +182,7 @@ $(document).ready(async function(){
 	  		 return false;
 	  	});
 
-  $('#logOut').on('click', function(){
-      $.ajax({
-          url : 'action/admin.php' ,
-            method : 'POST' ,
-            data : {
-                action : 'logOut',
-            },
-          success : function(data){
-									pagination();
-
-									$('.alert').hide();
-                  $('.res a').hide();
-									$("#logOut").hide();
-									$("#login").show();
-									$('#signinBtn').show();
-              },
-					error : function(data){
-
-								alert("ошибка");
-							}
-      });
-    });
+		//Форма для Входа в админку-------------------------
 
 		$('#login').on('click', ()=> {
 						$('#form2').show();
@@ -175,26 +190,31 @@ $(document).ready(async function(){
 						$('#formChange').hide();
 					  $('#formChangeButton').hide();
 					});
-
 });
 
+//вывести все комментарии--------------------------------
+
 function showCom(page=1){
+	var sort = $('select').val();
+	console.log('sdsd '+sort);
 	$.ajax({
 	    url : 'action/mess.php' ,
 	    method : 'POST' ,
 	    data : {
 	        action : 'index',
 	        page : page,
+					sort : sort,
 	    },
 	    success : function(comments){
 	       		$("#content").html(comments);
 	       		},
-			error : function(comments){
+			error : function(){
 							alert("ошибка");
 						}
 	});
 }
 
+//Удалить комментарий ------------------------------------------------
 
 function deleteElement(id){
 		$.ajax({
@@ -223,6 +243,8 @@ function deleteElement(id){
 	});
 }
 
+//Форма для изменения комментарий ------------------------------------------------
+
 function changeElement(id){
 	$('#formChange').show();
   $('#formChangeButton').show();
@@ -248,6 +270,7 @@ function changeElement(id){
 		});
 }
 
+//Пропустить комментарий ------------------------------------------------
 
 function accessElement(id){
 	$.ajax({
@@ -262,12 +285,14 @@ function accessElement(id){
 			$('#return'+id).hide();
 			$('#delete'+id).show();
 
-					},
+		},
 		error : function(comments){
 						alert("ошибка");
-					}
+		}
 	});
 }
+
+//Пагинация страниц комментарий ------------------------------------------------------
 
 function pagination(page=1){
 	$.ajax({
@@ -284,6 +309,7 @@ function pagination(page=1){
 						alert("ошибка");
 					}
 	});
+
 		showCom(page);
 }
 
@@ -308,6 +334,25 @@ function isLogged (){
 	})
 }
 
+function getPage() {
+	$.ajax({
+	    url : 'action/mess.php' ,
+	    method : 'POST' ,
+	    data : {
+	        action : 'getPage',
+	    },
+	    success : function(comments){
+	       		comments=JSON.parse(comments);
+						pagination(comments);
+						console.log(comments);
+          },
+			error : function(comments){
+						alert("ошибка");
+					}
+	});
+}
+
+//Влидация email ---------------------------------------------------------
 
 function isValidEmailAddress(emailAddress) {
     var pattern = /^([a-z0-9_\.-])+@[a-z0-9-]+\.([a-z]{2,4}\.)?[a-z]{2,4}$/i;

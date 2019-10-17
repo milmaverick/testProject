@@ -23,7 +23,6 @@ if ( isset($_POST['action'])){
            action_access();
            break;
   }
-
 }
 
 function action_signin(){

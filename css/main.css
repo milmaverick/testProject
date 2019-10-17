@@ -28,6 +28,10 @@ textarea {
 	display: block;
 	min-height: 500px;
 }
+.selector{
+	margin: 20px auto;
+}
+
 .comment{
 	display: block;
 	height: 80px;
