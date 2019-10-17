@@ -2,6 +2,23 @@ body {
 	background-color: #cccccc;
 }
 
+img{
+	margin: 0 auto;
+	width: 60px;
+	height: 60px;
+}
+
+input {
+	margin-top: 10px;
+}
+
+textarea {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	width : 250px;
+	height: 100px;
+}
+
 .container {
 	padding-top: 5px;
 	background-color: white;
@@ -15,30 +32,53 @@ body {
 	display: block;
 	height: 80px;
 	margin-top: 15px;
-	border: 1px solid black;
+	border-radius: 5px;
+	background-color: #e9ecef;
 }
+
 #pagination {
 	display: block;
 	width: 150px;
 	height: 50px;
 	margin: 10px auto;
-
 }
+
 .res a{
 	display: block;
 	float: right;
-	color:red;
 	margin: 5px;
+	font-weight: bold;
 }
-input {
-	margin-top: 10px;
+.resChange a{
+	color:#ffb41f;
 }
-textarea {
-	margin-top: 10px;
-	margin-bottom: 10px;
-	width : 250px;
-	height: 100px;
+
+.resDel a{
+	color:red;
 }
+
+.resReturn a{
+	color:#34c924;
+}
+
+.isChanged{
+	 font-weight: bold;
+	 color: blue;
+}
+
+.mr-3{
+	margin: 10px;
+}
+.alert{
+	display: none;
+}
+
 #logOut{
+	display: none;
+}
+.comment.deleteElement{
+		background-color: #8b0000;
+}
+.displayNone{
 	display: none;
 }

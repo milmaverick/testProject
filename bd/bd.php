@@ -1,16 +1,5 @@
 <?php
 
-//$connect = new PDO('mysql:host=localhost;dbname=comments', 'root', '');
-
-// $comments = $connect->query("SELECT * FROM comments")->fetchAll();
-// var_dump($comments);
-// try {
-//   $connect = new PDO('mysql:host=localhost;dbname=comments', 'root', '');
-//
-// } catch (PDOException $e) {
-//   print "Error!: " . $e->getMessage() . "<br/>";
-//   die();
-// }
 class DB {
 
     private static $instance;  // экземпляр объекта
@@ -89,13 +78,7 @@ $dbpassword = '';
 
 $dsn = "mysql:host = {$host}; dbname = comments;";
 
-/**
- * *******************************
- */
 
-/**
- * Попытка подключени к БД
- */
 try {
     DB::getInstance()->connect($dsn, $dbuser, $dbpassword);
     session_start() ;
@@ -104,8 +87,4 @@ try {
     exit;
 }
 
-// $pdo = DB::getInstance()->get_pdo();
-// var_dump($pdo);
-// $comments = $pdo->query("SELECT * FROM comments")->fetchAll();
-// var_dump($comments);
  ?>
