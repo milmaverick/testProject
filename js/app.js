@@ -82,7 +82,8 @@ $(document).ready(async function(){
 							if(msg=="true") {
 								//pagination();
 								getPage();
-
+								$('#form2')[0].reset();
+								$('#exampleModal').hide();
 								$('#alert-success').html('Успешный вход!');
 								$("#alert-success").show();
 								setTimeout(function(){
@@ -118,7 +119,7 @@ $(document).ready(async function(){
 	                action : 'logOut',
 	            },
 	          success : function(data){
-										//pagination();
+
 										getPage();
 										$('.alert').hide();
 	                  $('.res a').hide();
@@ -226,7 +227,7 @@ function deleteElement(id){
 	    },
 	    success : function(comments){
 					if (comments=="true") {
-						alert('Удалено');
+
 						$('#return'+id).removeClass('displayNone');
 						$('#delete'+id).hide();
 						$('#delete'+id).parent().parent()
