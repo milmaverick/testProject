@@ -83,7 +83,7 @@ $(document).ready(async function(){
 								//pagination();
 								getPage();
 								$('#form2')[0].reset();
-								$('#exampleModal').hide();
+							  $(".modal").modal("hide");
 								$('#alert-success').html('Успешный вход!');
 								$("#alert-success").show();
 								setTimeout(function(){
@@ -316,7 +316,7 @@ function pagination(page=1){
 
 function isLogged (){
 	$.ajax({
-			url : 'action/mess.php' ,
+			url : 'action/admin.php' ,
 				method : 'POST' ,
 				data : {
 						action : 'isLogged',

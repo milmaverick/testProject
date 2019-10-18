@@ -21,7 +21,7 @@ if ( isset($_POST))
 			}
 		}
     if(!preg_match('/^((([0-9A-Za-z]{1}[-0-9A-z\.]{1,}[0-9A-Za-z]{1})|([0-9А-Яа-я]{1}[-0-9А-я\.]{1,}
-			[0-9А-Яа-я]{1}))@([-A-Za-z]{1,}\.){1,2}[-A-Za-z]{2,})$/u', trim($_POST['params']['email'])))
+			[0-9А-Яа-я]{1}))@([-A-Za-z]{1,}\.){1,2}[-A-Za-z]{2,})$/u', trim($_POST['email'])))
 		{
 			$errors[]='Некорректный email';
 		}
@@ -44,7 +44,11 @@ if ( isset($_POST))
             {
               $newwidth = 320;
               $newheight = 240;
-              $thumb = imagecreatetruecolor($newwidth, $newheight);
+              $ratio = $width/$newwidth;
+              $w_dest = round($width/$ratio);
+              $h_dest = round($height/$ratio);
+
+              $thumb = imagecreatetruecolor($w_dest, $h_dest);
 
               switch($_FILES['uploadimage']['type']){
                   case 'image/jpeg': $source = imagecreatefromjpeg($_FILES['uploadimage']['tmp_name']); break; //Создаём изображения по
@@ -52,8 +56,8 @@ if ( isset($_POST))
                   case 'image/gif': $source = imagecreatefromgif($_FILES['uploadimage']['tmp_name']); break; //исходя из его формата
                   default: return false;
               }
-              imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
-              imagejpeg($thumb, "../img/".$_FILES['uploadimage']['name'],0, -1);
+              imagecopyresampled($thumb, $source, 0, 0, 0, 0, $w_dest, $h_dest, $width, $height);
+              imagejpeg($thumb, "../img/".$_FILES['uploadimage']['name'], 50);
            }
            else {
              move_uploaded_file($_FILES['uploadimage']['tmp_name'], '../img/' . $_FILES['uploadimage']['name']);
